@@ -11,7 +11,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.example.hellojni.HelloPluginJni;
 import com.example.mylib.Greet;
 import net.wequick.example.small.lib.utils.UIUtils;
 
@@ -88,7 +87,7 @@ public class MainFragment extends Fragment {
         tvLib.setText(Greet.hello());
 
         TextView tvJni = (TextView) rootView.findViewById(R.id.jni_label);
-        tvJni.setText(HelloPluginJni.stringFromJNI());
+        //tvJni.setText(HelloPluginJni.stringFromJNI());
 
         button = (Button) rootView.findViewById(R.id.play_video_button);
         button.setOnClickListener(new View.OnClickListener() {
