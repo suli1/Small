@@ -48,7 +48,7 @@ android {
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile fileTree(dir: 'libs', include: ['*.jar']/Users/suli690/open-code/architecture/Small/Android/demo/app/smallLibs/armeabi/libcom_paem_lib_utils.so)
     testCompile 'junit:junit:4.12'
     compile 'com.android.support:appcompat-v7:23.2.1'
     compile 'com.android.support:design:23.2.1'

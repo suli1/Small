@@ -22,7 +22,9 @@ import org.gradle.api.Project
 import org.gradle.api.tasks.Copy
 
 class AssetPlugin extends BundlePlugin {
+
     void apply(Project project) {
+        println 'Welcome to AssetPlugin!'
         super.apply(project)
     }
 

@@ -6,7 +6,6 @@ import net.wequick.gradle.tasks.CleanBundleTask
 import net.wequick.gradle.tasks.LintTask
 import net.wequick.gradle.util.DependenciesUtils
 import net.wequick.gradle.util.Log
-import net.wequick.gradle.util.TaskUtils
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.execution.TaskExecutionListener
@@ -21,6 +20,7 @@ class RootPlugin extends BasePlugin {
     private Map<String, Set<String>> bundleModules = [:]
 
     void apply(Project project) {
+        println "Welcome to RootPlugin!"
         super.apply(project)
     }
 
@@ -47,6 +47,7 @@ class RootPlugin extends BasePlugin {
         AppPlugin.sPackageIds = [:]
 
         project.afterEvaluate {
+            println "RootPlugin project after evaluate"
 
             def userBundleTypes = [:]
             rootExt.bundleModules.each { type, names ->
@@ -67,6 +68,7 @@ class RootPlugin extends BasePlugin {
 
             // Configure sub projects
             project.subprojects {
+                println "sub project ${it.name}"
                 if (it.name == 'small') {
                     rootExt.smallProject = it
                     return
@@ -77,6 +79,7 @@ class RootPlugin extends BasePlugin {
                     it.apply plugin: HostPlugin
                     rootExt.outputBundleDir = new File(it.projectDir, SMALL_LIBS)
                     rootExt.hostProject = it
+                    println "Add HostPlugin to ${rootExt.hostModuleName}"
                 } else if (it.name.startsWith('app+')) {
                     rootExt.hostStubProjects.add(it)
                     return
@@ -159,9 +162,15 @@ class RootPlugin extends BasePlugin {
             }
         }
 
+        // 处理support库兼容问题
         compatVendors()
     }
 
+    /**
+     *
+     * 处理Android APP module的support版本
+     e 是所有的support依赖版本保持一致
+     */
     protected void configVersions(Project p, RootExtension.AndroidConfig base) {
         if (!p.hasProperty('android')) return
 
@@ -271,7 +280,7 @@ class RootPlugin extends BasePlugin {
                     .resolvedConfiguration.firstLevelModuleDependencies.find {
                 it.moduleGroup == 'com.android.tools.build' && it.moduleName == 'gradle'
             }
-            if (androidGradlePlugin != null)  {
+            if (androidGradlePlugin != null) {
                 print String.format('%24s', 'android plugin : ')
                 println androidGradlePlugin.moduleVersion
             }
@@ -350,8 +359,8 @@ class RootPlugin extends BasePlugin {
             d.group == 'com.android.support' && d.name != 'multidex'
         }
         def supportVer = supportLib != null ? supportLib.version : ''
-        return [sdk: sdk,
-                aapt: android.buildToolsVersion,
+        return [sdk    : sdk,
+                aapt   : android.buildToolsVersion,
                 support: supportVer]
     }
 
@@ -412,7 +421,7 @@ class RootPlugin extends BasePlugin {
         def libName = lib.name
         def ext = (AndroidExtension) lib.small
 
-        // Copy jars
+        // Copy jars  build-small/intermediates/small-pre-jar/base/
         def preJarDir = small.preBaseJarDir
         if (!preJarDir.exists()) preJarDir.mkdirs()
         //  - copy package.R jar
@@ -421,8 +430,9 @@ class RootPlugin extends BasePlugin {
             project.copy {
                 from rJar
                 into preJarDir
-                rename {"$libName-r.jar"}
+                rename { "$libName-r.jar" }
             }
+            println "copy jar from ${rJar} to ${preJarDir}/${libName}-r.jar"
         }
         //  - copy dependencies jars
         ext.buildCaches.each { k, v ->
@@ -442,8 +452,9 @@ class RootPlugin extends BasePlugin {
             project.copy {
                 from jarFile
                 into preJarDir
-                rename {destFile.name}
+                rename { destFile.name }
             }
+            println "copy buildCaches jar from ${jarFile} to ${preJarDir}/${destFile.name}"
 
             // Check if exists `jars/libs/*.jar' and copy
             File libDir = new File(jarDir, 'libs')
@@ -456,8 +467,9 @@ class RootPlugin extends BasePlugin {
                 project.copy {
                     from jar
                     into preJarDir
-                    rename {destFile.name}
+                    rename { destFile.name }
                 }
+                println "copy libDir jar from ${jar} to ${preJarDir}/${destFile.name}"
             }
         }
 
@@ -470,8 +482,11 @@ class RootPlugin extends BasePlugin {
         project.copy {
             from apFile
             into preApDir
-            rename {preApName}
+            rename { preApName }
         }
+        println "copy *.ap_ from ${apFile} to ${preApDir}/${preApName}"
+
+
         // Copy R.txt
         def preIdsDir = small.preIdsDir
         if (!preIdsDir.exists()) preIdsDir.mkdir()
@@ -500,6 +515,7 @@ class RootPlugin extends BasePlugin {
             keysPw.flush()
             keysPw.close()
         }
+        println "Copy R.txt from srcIds:${srcIdsFile.getAbsolutePath()}"
 
         // Backup dependencies
         if (!small.preLinkAarDir.exists()) small.preLinkAarDir.mkdirs()
@@ -587,7 +603,7 @@ class RootPlugin extends BasePlugin {
     private void injectBuildLog() {
         project.gradle.taskGraph.addTaskExecutionListener(new TaskExecutionListener() {
             @Override
-            void beforeExecute(Task task) { }
+            void beforeExecute(Task task) {}
 
             @Override
             void afterExecute(Task task, TaskState taskState) {
@@ -640,9 +656,9 @@ class RootPlugin extends BasePlugin {
         long size = file.length()
         if (size <= 0) return '0'
 
-        def units = [ 'B', 'KB', 'MB', 'GB', 'TB' ]
-        int level = (int) (Math.log10(size)/Math.log10(1024))
-        def formatSize = new DecimalFormat('#,##0.#').format(size/Math.pow(1024, level))
+        def units = ['B', 'KB', 'MB', 'GB', 'TB']
+        int level = (int) (Math.log10(size) / Math.log10(1024))
+        def formatSize = new DecimalFormat('#,##0.#').format(size / Math.pow(1024, level))
         return "$formatSize ${units[level]}"
     }
 }

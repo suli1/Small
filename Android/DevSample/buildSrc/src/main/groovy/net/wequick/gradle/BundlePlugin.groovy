@@ -72,6 +72,7 @@ abstract class BundlePlugin extends AndroidPlugin {
         ext.outputFile = outputFile
         variant.outputs.each { out ->
             out.outputFile = outputFile
+            println "output to :${outputFile.name}"
         }
     }
 

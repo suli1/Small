@@ -7,6 +7,7 @@ import org.gradle.api.Project
 class HostPlugin extends AndroidPlugin {
 
     void apply(Project project) {
+        println "Welcome to HostPlugin!"
         super.apply(project)
     }
 
@@ -71,5 +72,6 @@ class HostPlugin extends AndroidPlugin {
             small.aapt = project.processReleaseResources
         }
         project.buildLib.dependsOn small.jar
+        println "buildLib dependsOn small.jar"
     }
 }

@@ -58,3 +58,11 @@ task('changes').doLast {
     }
     // println log.execute().text
 }
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            repository(url: uri('../../repo'))
+        }
+    }
+}

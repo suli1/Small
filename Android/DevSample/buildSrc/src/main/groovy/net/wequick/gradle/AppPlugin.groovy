@@ -59,6 +59,7 @@ class AppPlugin extends BundlePlugin {
     protected File mMinifyJar
 
     void apply(Project project) {
+        println 'Welcome to AppPlugin!'
         super.apply(project)
     }
 
@@ -102,9 +103,11 @@ class AppPlugin extends BundlePlugin {
                 smallLibs.add(it)
                 mProvidedProjects.add(it.dependencyProject)
                 mDependentLibProjects.add(it.dependencyProject)
+                println "Add provided dependency project: ${it.name}"
             } else {
                 mCompiledProjects.add(it.dependencyProject)
                 collectAarsOfLibrary(it.dependencyProject, mUserLibAars)
+                println "Add compile dependency project: ${it.name}"
             }
         }
         collectAarsOfLibrary(project, mUserLibAars)
@@ -251,8 +254,12 @@ class AppPlugin extends BundlePlugin {
         }
     }
 
-    protected void hookProcessDebugManifest(Task processDebugManifest,
-                                            List libs) {
+    /**
+     *
+     * @param processDebugManifest
+     * @param libs
+     */
+    protected void hookProcessDebugManifest(Task processDebugManifest, List libs) {
         if (processDebugManifest.hasProperty('providers')) {
             processDebugManifest.providers = []
             return
@@ -1086,6 +1093,7 @@ class AppPlugin extends BundlePlugin {
                 def backup = new File(it.parentFile, "$it.name~")
                 strips.add(org: it, backup: backup)
                 it.renameTo(backup)
+                println "strip aar files backup:${backup.absolutePath}"
             }
             it.extensions.add('strips', strips)
         }
@@ -1093,6 +1101,7 @@ class AppPlugin extends BundlePlugin {
             Set<Map> strips = (Set<Map>) it.extensions.getByName('strips')
             strips.each {
                 it.backup.renameTo(it.org)
+                println "strip aar files rename to org:${it.org}"
             }
         }
     }
