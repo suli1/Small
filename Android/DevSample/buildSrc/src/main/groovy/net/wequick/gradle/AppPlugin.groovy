@@ -86,9 +86,10 @@ class AppPlugin extends BundlePlugin {
     @Override
     protected void afterEvaluate(boolean released) {
         super.afterEvaluate(released)
+        println ">> AppPlugin.afterEvaluate"
 
         // Initialize a resource package id for current bundle
-        initPackageId()
+        initPackageId() // AAPT id 分段
 
         // Get all dependencies with gradle script `compile project(':lib.*')'
         DependencySet compilesDependencies = project.configurations.compile.dependencies
@@ -354,6 +355,7 @@ class AppPlugin extends BundlePlugin {
     @Override
     protected void configureReleaseVariant(BaseVariant variant) {
         super.configureReleaseVariant(variant)
+        println ">> AppPlugin.configureReleaseVariant"
 
         // Fill extensions
         def variantName = variant.name.capitalize()
@@ -1134,6 +1136,7 @@ class AppPlugin extends BundlePlugin {
     @Override
     protected void hookPreReleaseBuild() {
         super.hookPreReleaseBuild()
+        println ">> AppPlugin.hookPreReleaseBuild"
 
         // Ensure generating text symbols - R.txt
         // --------------------------------------

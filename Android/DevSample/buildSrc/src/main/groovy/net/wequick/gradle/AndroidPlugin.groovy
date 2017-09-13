@@ -79,6 +79,7 @@ class AndroidPlugin extends BasePlugin {
     protected void beforeEvaluate(boolean released) { }
 
     protected void afterEvaluate(boolean released) {
+        println ">> AndroidPlugin.afterEvaluate, release:${released}"
         // Automatic add `small' dependency
         if (rootSmall.smallProject != null) {
             project.dependencies.add(smallCompileType, rootSmall.smallProject)

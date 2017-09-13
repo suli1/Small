@@ -42,6 +42,7 @@ abstract class BundlePlugin extends AndroidPlugin {
     @Override
     protected void afterEvaluate(boolean released) {
         super.afterEvaluate(released)
+        println ">> BundlePlugin.afterEvaluate"
         if (!released) return
 
         BuildType buildType = android.buildTypes.find { it.name == 'release' }
